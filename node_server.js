@@ -13,25 +13,30 @@ const credentialsFunc = function (id) {
     return credentials;
 };
 
-const server = http.createServer( (req, res) => {
+const server = http.createServer((req, res) => {
     let status = 200;
 
     // hawk function
     console.log('calling hawk algo...');
-        (async () => {
-            try {
-                const { credentials, artifacts } = await Hawk.server.authenticate(req, credentialsFunc);
-                console.log(`Hello ${credentials.user} ${artifacts.ext}`);
-            } catch (err) {
-                console.log(`[ERROR]: Hawk auth error => ${err.message}`);
-                status = 401;
-            }
-            console.log('server start responding...');
-            res.writeHead(status, {'Content-Type': 'application/json'});
-            res.end(`Hawk auth headers status code: ${status}`);
-            console.log('server response ended...')
-        })();
-    
+    (async () => {
+        try {
+            const {
+                credentials,
+                artifacts
+            } = await Hawk.server.authenticate(req, credentialsFunc);
+            console.log(`Hello ${credentials.user} ${artifacts.ext}`);
+        } catch (err) {
+            console.log(`[ERROR]: Hawk auth error => ${err.message}`);
+            status = 401;
+        }
+        console.log('server start responding...');
+        res.writeHead(status, {
+            'Content-Type': 'application/json'
+        });
+        res.end(`Hawk auth headers status code: ${status}`);
+        console.log('server response ended...')
+    })();
+
 });
 
 server.listen(port, host, () => {
